@@ -4,6 +4,8 @@ import (
 	"time"
 
 	"util/logs"
+
+	ctime "core/time"
 )
 
 // 服务器每次更新后sleep时间
@@ -57,6 +59,7 @@ func (s *Server) run() {
 			return
 
 		default:
+			ctime.Update()
 			s.srv.Update()
 			time.Sleep(X_ServerSleep)
 		}

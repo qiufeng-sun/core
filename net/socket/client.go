@@ -45,6 +45,11 @@ type Receiver interface {
 	Clear()
 }
 
+//
+type IMsgChan interface {
+	GetMsgChan() <-chan []byte
+}
+
 // 客户端对象
 type Client struct {
 	id          int       // id

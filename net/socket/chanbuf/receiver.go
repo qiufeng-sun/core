@@ -68,6 +68,10 @@ func (this *ChanReceiver) GetMsg() ([]byte, bool) {
 	}
 }
 
+func (this *ChanReceiver) GetMsgChan() <-chan []byte {
+	return this.chMsg
+}
+
 //
 func (this *ChanReceiver) Release([]byte) {
 	// do nothing

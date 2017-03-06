@@ -25,6 +25,10 @@ func GetLogonWaitClient() (int, bool) {
 	return g_netServer.GetLogonWaitClient()
 }
 
+func GetLogonWait() <-chan int {
+	return g_netServer.GetLogonWait()
+}
+
 // 踢掉客户端
 func KickClient(netId int) {
 	g_netServer.KickClient(netId)
@@ -54,6 +58,10 @@ func SendMsg(netId int, msgId uint32, msgData interface{}) error {
 func GetMsg(netId int) ([]byte, bool) {
 	b, ok := g_netServer.GetMsg(netId)
 	return b, ok
+}
+
+func GetMsgReceiver(netId int) Receiver {
+	return g_netServer.GetMsgReceiver(netId)
 }
 
 // 回收消息

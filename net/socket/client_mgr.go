@@ -164,6 +164,10 @@ func (mgr *clientMgr) GetLogonWaitClient() (int, bool) {
 	}
 }
 
+func (mgr *clientMgr) GetLogonWait() <-chan int {
+	return mgr.chLogonWait
+}
+
 // 客户端id是否合法
 func (mgr *clientMgr) IsClientIdValid(id int) bool {
 	return id >= 0 && id < mgr.maxUsed
@@ -207,6 +211,15 @@ func (mgr *clientMgr) GetMsg(id int) ([]byte, bool) {
 	}
 
 	return client.receiver.GetMsg()
+}
+
+func (mgr *clientMgr) GetMsgReceiver(id int) Receiver {
+	var client = mgr.getClient(id)
+	if nil == client {
+		return nil
+	}
+
+	return client.receiver
 }
 
 // 回收消息

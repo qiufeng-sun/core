@@ -6,8 +6,6 @@ import (
 	"encoding/binary"
 
 	"core/buff"
-
-	. "msg/pbmsg"
 )
 
 // 常量
@@ -25,11 +23,11 @@ func SetByteOrder(order binary.ByteOrder) {
 	g_byteOrder = order
 }
 
-// 错误码转换
-func Err2Int32(err EMsgErr) *int32 {
-	n := int32(err)
-	return &n
-}
+//// 错误码转换
+//func Err2Int32(err EMsgErr) *int32 {
+//	n := int32(err)
+//	return &n
+//}
 
 // 从iov中读取uint32
 func Uint32(iov *buff.IoVector) (uint32, bool) {
