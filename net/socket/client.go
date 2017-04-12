@@ -257,6 +257,8 @@ func (c *Client) SendMsg(serverClose <-chan bool) {
 	defer c.setSendQuit()
 
 	ticker := time.NewTicker(time.Millisecond * 100)
+	defer ticker.Stop()
+
 	watchSend := c.sender.WatchSend()
 	bQuit := false
 	for {

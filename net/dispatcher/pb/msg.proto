@@ -1,0 +1,9 @@
+syntax="proto3";
+
+package pb;
+
+message PbFrame {
+	string src_url = 1; // gate:$addr:$chk:$objId
+	repeated string dst_urls = 2;
+	bytes msg_raw = 3; 
+}

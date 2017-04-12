@@ -18,7 +18,7 @@ func TestLan(t *testing.T) {
 	wg.Add(1)
 	go func() {
 		t.Log("create server!")
-		s := NewServer(url)
+		s := NewServer(NewLanCfg("test", url))
 
 		for i := 0; i < loop; i++ {
 			msg, e := s.Recv()
@@ -32,7 +32,7 @@ func TestLan(t *testing.T) {
 
 	wg.Add(1)
 	go func() {
-		c := NewClient(url)
+		c := NewClient(NewLanCfg("test", url))
 
 		t.Log("create client!")
 		for i := 0; i < loop; i++ {
@@ -46,4 +46,22 @@ func TestLan(t *testing.T) {
 	}()
 
 	wg.Wait()
+}
+
+//
+func TestClients_Update(t *testing.T) {
+	ds := [][]string{
+		{"data", "127.0.0.1:8801"},
+		{"match", "127.0.0.1:8811", "127.0.0.1:8812", "127.0.0.1:8813"},
+		{"data", "127.0.0.1:8801", "127.0.0.1:8802"},
+		{"match"},
+		{"data"},
+		{"match", "127.0.0.1:8811", "127.0.0.1:8812", "127.0.0.1:8813"},
+	}
+
+	cs := NewClients("gw")
+
+	for _, v := range ds {
+		cs.Update(v[0], v[1:])
+	}
 }
