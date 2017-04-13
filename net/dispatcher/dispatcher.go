@@ -50,7 +50,7 @@ func (this *Dispatcher) Unregister(u Unit) {
 func (this *Dispatcher) Dispatch(f *pb.PbFrame) {
 	for _, url := range f.DstUrls {
 		//srv, addr, chk, id, ok := lan.Url2Part(url)
-		_, _, _, id, ok := Url2Part(url)
+		_, id, ok := Url2Part(url)
 		if !ok {
 			logs.Warn("invalid dst url in frame! %v:%v", this.Name, url)
 			continue

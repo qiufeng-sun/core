@@ -1,8 +1,32 @@
 package dispatcher
 
 import (
+	"fmt"
 	"strconv"
+	"strings"
+
+	"core/net/dispatcher/pb"
 )
+
+//
+type Frame struct {
+	*pb.PbFrame
+	DstUrl string
+}
+
+//
+func Url2Part(url string) (srvId, uid string, ok bool) {
+	ss := strings.Split(url, "@")
+	if len(ss) != 2 {
+		return
+	}
+	return ss[0], ss[1], true
+}
+
+//
+func Url(srvId string, uid int) string {
+	return fmt.Sprintf("%v@%v", srvId, uid)
+}
 
 // 消息处理单元
 type Unit interface {

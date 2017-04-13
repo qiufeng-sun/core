@@ -2,6 +2,7 @@ package lan
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
 	"sync"
 
@@ -17,6 +18,16 @@ import (
 var _ = logs.Debug
 
 //
+func SrvName(srvId string) string {
+	ss := strings.Split(srvId, "#")
+	return ss[0]
+}
+
+func SrvId(srvName, addr string) string {
+	return fmt.Sprintf("%s#%s", srvName, addr)
+}
+
+//
 type LanCfg struct {
 	Name string // server name
 	Addr string // server addr -- tcp://$ip:$port
@@ -30,7 +41,7 @@ func NewLanCfg(name, addr string) *LanCfg {
 }
 
 func (this LanCfg) ServerId() string {
-	return fmt.Sprintf("%s:%s", this.Name, this.Addr)
+	return SrvId(this.Name, this.Addr)
 }
 
 func (this *LanCfg) String() string {
@@ -157,6 +168,20 @@ func (this *Clients) Update(srv string, addrs []string) {
 	// log
 	logs.Info("%v update name clients:%v", this.SenderId, this.NameClients)
 	logs.Info("%v update id client:%v", this.SenderId, this.IdClient)
+}
+
+// select random client
+func (this *Clients) SelectRand(srv string) string {
+	srvs := this.NameClients[srv]
+	num := len(srvs)
+	if num <= 0 {
+		return ""
+	}
+	s := srvs[0]
+	if num > 1 {
+		s = srvs[rand.Intn(num)]
+	}
+	return s.ServerId()
 }
 
 //
