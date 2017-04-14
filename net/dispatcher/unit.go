@@ -5,8 +5,12 @@ import (
 	"strconv"
 	"strings"
 
+	"util/logs"
+
 	"core/net/dispatcher/pb"
 )
+
+var _ = logs.Debug
 
 //
 type Frame struct {
@@ -30,7 +34,7 @@ func Url(srvId string, uid int) string {
 
 // 消息处理单元
 type Unit interface {
-	SetId(id int)
+	Set(id int, srvId string)
 	GetId() int
 	GetIdStr() string
 	AddFrame(f *Frame) bool
@@ -38,7 +42,8 @@ type Unit interface {
 
 //
 type BaseUnit struct {
-	Id int // global id
+	Id  int // global id
+	Url string
 
 	//
 	Frames chan *Frame // servers' msg(frame)
@@ -49,8 +54,9 @@ func NewBaseUnit(frameNum int) *BaseUnit {
 	return &BaseUnit{Frames: make(chan *Frame, frameNum)}
 }
 
-func (this *BaseUnit) SetId(id int) {
+func (this *BaseUnit) Set(id int, url string) {
 	this.Id = id
+	this.Url = url
 }
 
 func (this *BaseUnit) GetId() int {

@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"core/buff"
+	"core/net/msg"
 )
 
 // 发送消息缓冲
@@ -77,18 +78,24 @@ func (s *RingSender) send(conn net.Conn, data []byte) error {
 }
 
 // 写入发送缓冲
-func (s *RingSender) Write(b1 []byte, b2 []byte) (n int, e error) {
+func (s *RingSender) Write(b1 []byte, b2 []byte) error {
 	s.Lock()
 	defer s.Unlock()
 
-	n1, e := s.RingBuff.Write(b1)
-	if e != nil {
-		return n1, e
+	// 消息大小
+	sz := uint32(len(b1) + len(b2))
+	b := msg.Uint32Bytes(sz)
+	if _, e := s.RingBuff.Write(b); e != nil {
+		return e
 	}
 
-	n2, e := s.RingBuff.Write(b2)
-	if e != nil {
-		return n1 + n2, e
+	// 消息
+	if _, e := s.RingBuff.Write(b1); e != nil {
+		return e
+	}
+
+	if _, e := s.RingBuff.Write(b2); e != nil {
+		return e
 	}
 
 	// 通知发送协程
@@ -97,7 +104,7 @@ func (s *RingSender) Write(b1 []byte, b2 []byte) (n int, e error) {
 	default:
 	}
 
-	return n1 + n2, nil
+	return nil
 }
 
 //

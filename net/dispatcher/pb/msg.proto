@@ -5,5 +5,6 @@ package pb;
 message PbFrame {
 	string src_url = 1; // gate:$addr:$chk:$objId
 	repeated string dst_urls = 2;
-	bytes msg_raw = 3; 
+	int64 acc_id = 3;
+	bytes msg_raw = 4; 
 }

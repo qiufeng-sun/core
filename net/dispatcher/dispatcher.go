@@ -14,16 +14,18 @@ var _ = logs.Debug
 
 // 消息分发器
 type Dispatcher struct {
-	Name string // 标识
-	Id   int    // global id
+	Name  string // 标识
+	SrvId string
 
+	Id    int             // global id
 	Units map[string]Unit // global id => unit
 	sync.Mutex
 }
 
-func New(name string) *Dispatcher {
+func New(name string, srvId string) *Dispatcher {
 	return &Dispatcher{
 		Name:  name,
+		SrvId: srvId,
 		Units: map[string]Unit{},
 	}
 }
@@ -34,7 +36,8 @@ func (this *Dispatcher) Register(u Unit) {
 	defer this.Unlock()
 
 	this.Id++
-	u.SetId(this.Id)
+	url := Url(this.SrvId, this.Id)
+	u.Set(this.Id, url)
 	this.Units[strconv.Itoa(this.Id)] = u
 }
 

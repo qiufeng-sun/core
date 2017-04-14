@@ -27,9 +27,9 @@ func SetLogonWaitTime(d time.Duration) {
 
 // sender
 type Sender interface {
-	Send(conn net.Conn) error                    // 发送消息
-	Write(b1 []byte, b2 []byte) (n int, e error) // 写缓冲(param: 消息头(消息大小＋消息id), 消息体)
-	WatchSend() <-chan bool                      // 是否有需要发送的消息
+	Send(conn net.Conn) error         // 发送消息
+	Write(b1 []byte, b2 []byte) error // 写缓冲(param: 消息id, 消息体)
+	WatchSend() <-chan bool           // 是否有需要发送的消息
 
 	Clear()
 }

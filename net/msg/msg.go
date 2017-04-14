@@ -1,4 +1,4 @@
-// 消息 -- 格式: 消息头(消息大小＋消息id), 消息体
+// 消息 -- 格式: 消息大小,消息id,消息体(消息大小＝消息id和消息体)
 package msg
 
 // import
@@ -10,9 +10,8 @@ import (
 
 // 常量
 const (
-	x_MsgSzBytes  = 4                        // 消息大小所占空间(header1)
-	x_MsgIdSz     = 4                        // id大小(header2)
-	x_MsgHeaderSz = x_MsgSzBytes + x_MsgIdSz // 消息头(消息大小＋消息id)大小
+	x_MsgSzBytes = 4 // 消息大小所占空间(header1)
+	x_MsgIdSz    = 4 // id大小(header2)
 )
 
 // 字节序
@@ -51,6 +50,11 @@ func Uint32ByBytes(data []byte) (uint32, bool) {
 func PutUint32(data []byte, val uint32) []byte {
 	g_byteOrder.PutUint32(data, val)
 	return data
+}
+
+func Uint32Bytes(v uint32) []byte {
+	r := make([]byte, 4)
+	return PutUint32(r, v)
 }
 
 // 检查消息是否完整 -- 返回值: (消息大小, 是否完成)
@@ -106,7 +110,7 @@ type Parser interface {
 }
 
 // marshal
-// @return: 消息头(消息大小＋消息id), 消息体, error
+// @return: 消息id, 消息体, error
 func Marshal(msgId uint32, msgData interface{},
 	marshal func(data interface{}) ([]byte, error)) ([]byte, []byte, error) {
 	b2, e := marshal(msgData)
@@ -114,9 +118,7 @@ func Marshal(msgId uint32, msgData interface{},
 		return nil, nil, e
 	}
 
-	b1 := make([]byte, x_MsgHeaderSz)
-	PutUint32(b1[:x_MsgSzBytes], uint32(len(b2)+x_MsgIdSz))
-	PutUint32(b1[x_MsgSzBytes:], msgId)
+	b1 := Uint32Bytes(msgId)
 
 	return b1, b2, nil
 }

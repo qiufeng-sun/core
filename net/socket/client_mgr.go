@@ -237,7 +237,5 @@ func (mgr *clientMgr) SendMsg(id int, d1, d2 []byte) error {
 		return ErrNotFoundClient
 	}
 
-	_, e := client.sender.Write(d1, d2)
-
-	return e
+	return client.sender.Write(d1, d2)
 }

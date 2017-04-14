@@ -1,6 +1,7 @@
 package lan
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"strings"
@@ -182,6 +183,17 @@ func (this *Clients) SelectRand(srv string) string {
 		s = srvs[rand.Intn(num)]
 	}
 	return s.ServerId()
+}
+
+// send msg
+func (this *Clients) SendMsg(srvId string, d []byte) error {
+	// find
+	c, ok := this.IdClient[srvId]
+	if !ok {
+		return errors.New("server not found! id:" + srvId)
+	}
+
+	return c.Send(d)
 }
 
 //

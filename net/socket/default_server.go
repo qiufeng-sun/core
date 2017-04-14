@@ -54,6 +54,10 @@ func SendMsg(netId int, msgId uint32, msgData interface{}) error {
 	return g_netServer.SendMsg(netId, d1, d2)
 }
 
+func SendBytes(netId int, d []byte) error {
+	return g_netServer.SendMsg(netId, d, nil)
+}
+
 // 获取消息
 func GetMsg(netId int) ([]byte, bool) {
 	b, ok := g_netServer.GetMsg(netId)
