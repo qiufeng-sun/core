@@ -2,13 +2,18 @@ package chanbuf
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"net"
 
 	"core/net/msg"
+
+	"util/logs"
 )
 
 var EReceiverFull = errors.New("receiver chan is full!")
+
+const msg_MaxRecv uint32 = 1024
 
 //
 type ChanReceiver struct {
@@ -38,6 +43,10 @@ func (this *ChanReceiver) Recv(c net.Conn) (int64, error) {
 	}
 
 	sz, _ := msg.Uint32ByBytes(bsz[:])
+	if sz > msg_MaxRecv {
+		return 0, fmt.Errorf("msg recv too large:%v", sz)
+	}
+	logs.Debug("recv msg size:%v", sz)
 
 	buff := make([]byte, int(sz))
 	if _, e := io.ReadFull(c, buff); e != nil {

@@ -42,6 +42,9 @@ func (s *Server) Serve(lsnAddr string, maxClients int) error {
 		return e
 	}
 
+	//
+	logs.Info("server start lister client connect! addr:%v", lsnAddr)
+
 	// 初始化客户端管理
 	s.clientMgr = NewClientMgr(maxClients)
 
@@ -79,7 +82,7 @@ func (s *Server) handleClient(listener *net.TCPListener) {
 		}
 
 		// debug log
-		logs.Debug("wait accept!")
+		//logs.Debug("wait accept!")
 
 		// 设置超时, 并监听
 		listener.SetDeadline(time.Now().Add(xReadWriteDeadline))

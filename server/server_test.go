@@ -29,7 +29,7 @@ func (s *TestServer) PreQuit() {
 	logs.Info("prequit")
 }
 
-func (s *TestServer) String() string {
+func (s TestServer) String() string {
 	return "TestServer"
 }
 

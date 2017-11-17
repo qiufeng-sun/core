@@ -14,18 +14,20 @@ import (
 	"github.com/go-mangos/mangos/transport/tcp"
 
 	"util/logs"
+
+	"core/net"
 )
 
 var _ = logs.Debug
 
 //
 func SrvName(srvId string) string {
-	ss := strings.Split(srvId, "#")
+	ss := strings.Split(srvId, "@")
 	return ss[0]
 }
 
 func SrvId(srvName, addr string) string {
-	return fmt.Sprintf("%s#%s", srvName, addr)
+	return fmt.Sprintf("%s@%s", srvName, addr) // to do缩短长度
 }
 
 //
@@ -45,7 +47,7 @@ func (this LanCfg) ServerId() string {
 	return SrvId(this.Name, this.Addr)
 }
 
-func (this *LanCfg) String() string {
+func (this LanCfg) String() string {
 	return fmt.Sprintf("%v=>%v", this.Name, this.Addr)
 }
 
@@ -53,6 +55,8 @@ func (this *LanCfg) String() string {
 type Server struct {
 	*LanCfg
 	mangos.Socket
+
+	SrvUrl string
 }
 
 func NewServer(cfg *LanCfg) *Server {
@@ -66,7 +70,13 @@ func NewServer(cfg *LanCfg) *Server {
 		logs.Panicln(e)
 	}
 
-	return &Server{LanCfg: cfg, Socket: sock}
+	//
+	logs.Info("server<%+v> start listen lan connect!", cfg)
+
+	//
+	srvUrl := net.GenUrl(cfg.ServerId(), "0")
+
+	return &Server{LanCfg: cfg, Socket: sock, SrvUrl: srvUrl}
 }
 
 func (this *Server) Recv() ([]byte, error) {
@@ -75,6 +85,10 @@ func (this *Server) Recv() ([]byte, error) {
 
 func (this *Server) Close() {
 	this.Socket.Close()
+}
+
+func (this Server) GetUrl() string {
+	return this.SrvUrl
 }
 
 //

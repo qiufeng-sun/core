@@ -11,17 +11,20 @@ import (
 //
 func watchSignal(rch chan<- string) {
 	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, syscall.SIGTERM)
-	signal.Notify(ch, syscall.SIGINT)
+	signal.Notify(
+		ch,
+		syscall.SIGTERM,
+		syscall.SIGINT,
+	)
 
 	for {
 		msg := <-ch
 		switch msg {
 		case syscall.SIGTERM:
-			rch <- "signal:terminated"
+			rch <- "syscall.SIGTERM"
 
 		case syscall.SIGINT:
-			rch <- "signal:interrupt"
+			rch <- "syscall.SIGINT"
 		}
 
 		close(rch)

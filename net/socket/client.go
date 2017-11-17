@@ -200,8 +200,8 @@ func (c *Client) checkFirstLogon() {
 // 获取消息
 func (c *Client) RecvMsg(serverClose <-chan bool) {
 	// log
-	logs.Info("client recv msg start.id:%v,ip:%v", c.id, c.conn.RemoteAddr())
-	defer logs.Info("client recv msg quit.id:%v,ip:%v", c.id, c.conn.RemoteAddr())
+	logs.Info("client recv msg start -- id:%v,ip:%v", c.id, c.conn.RemoteAddr())
+	defer logs.Info("client recv msg quit -- id:%v,ip:%v", c.id, c.conn.RemoteAddr())
 
 	// 停止获取消息
 	defer c.setRecvQuit()
@@ -250,8 +250,8 @@ func (c *Client) RecvMsg(serverClose <-chan bool) {
 // 发送消息
 func (c *Client) SendMsg(serverClose <-chan bool) {
 	// log
-	logs.Info("client send msg start.id:%v,ip:%v", c.id, c.conn.RemoteAddr())
-	defer logs.Info("client send msg quit.id:%v,ip:%v", c.id, c.conn.RemoteAddr())
+	logs.Info("client send msg start -- id:%v,ip:%v", c.id, c.conn.RemoteAddr())
+	defer logs.Info("client send msg quit -- id:%v,ip:%v", c.id, c.conn.RemoteAddr())
 
 	// 停止发送消息
 	defer c.setSendQuit()

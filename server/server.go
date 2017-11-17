@@ -20,17 +20,37 @@ type IServer interface {
 	String() string
 }
 
-// wrap server
+//
 type Server struct {
-	srv  IServer
-	quit chan bool
 }
 
-// server obj
-var g_server *Server
+//
+func (this *Server) Init() bool {
+	return false
+}
+
+//
+func (this *Server) Update() {}
+
+//
+func (this *Server) Destroy() {}
+
+//
+func (this *Server) PreQuit() {}
+
+//
+func (this Server) String() string {
+	return "server"
+}
+
+// wrap server
+type WrapServer struct {
+	srv  IServer
+	quit chan bool // 阻塞chan
+}
 
 // init
-func (s *Server) init() bool {
+func (s *WrapServer) init() bool {
 	logs.Infoln(s.srv, "init...")
 
 	if s.srv.Init() {
@@ -44,18 +64,26 @@ func (s *Server) init() bool {
 	return false
 }
 
-// run
-func (s *Server) run() {
+// run -- main loop
+func (s *WrapServer) run() {
 	logs.Infoln(s.srv, "running...")
 	defer logs.Infoln(s.srv, "run end.")
 
+	// signal
+	chSig := WatchSignal()
+
 	for {
 		select {
+		case strSig := <-chSig:
+			logs.Infoln(s.srv, "receive signal:", strSig)
+
+			s.srv.PreQuit()
+			return
+
 		case <-s.quit:
 			logs.Infoln(s.srv, "run quit...")
-			s.srv.PreQuit()
 
-			s.quit <- true
+			s.srv.PreQuit()
 			return
 
 		default:
@@ -67,17 +95,16 @@ func (s *Server) run() {
 }
 
 // destroy
-func (s *Server) destroy() {
+func (s *WrapServer) destroy() {
 	logs.Infoln(s.srv, "destroy...")
 	defer logs.Infoln(s.srv, "destroy end.")
 
 	s.srv.Destroy()
+	close(s.quit)
 }
 
 // stop
-func (s *Server) stop() {
-	defer close(s.quit)
-
+func (s *WrapServer) stop() {
 	logs.Infoln(s.srv, "stop...")
 	defer logs.Infoln(s.srv, "stop end.")
 
@@ -86,9 +113,12 @@ func (s *Server) stop() {
 }
 
 // new server
-func newServer(s IServer) *Server {
-	return &Server{quit: make(chan bool), srv: s}
+func newServer(s IServer) *WrapServer {
+	return &WrapServer{quit: make(chan bool), srv: s}
 }
+
+// server obj
+var g_server *WrapServer
 
 // run server
 func Run(s IServer) {
