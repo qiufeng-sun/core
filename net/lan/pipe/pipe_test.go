@@ -1,9 +1,11 @@
-package lan
+package pipe
 
 import (
 	"sync"
 	"testing"
 	"time"
+
+	. "core/net/lan"
 )
 
 var _ = time.Now

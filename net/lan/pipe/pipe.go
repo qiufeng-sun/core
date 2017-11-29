@@ -1,10 +1,11 @@
-package lan
+/**
+* 服务端有一个用来接受其他服务器消息的管道，和多个向其他服务器发送消息的管道
+**/
+package pipe
 
 import (
 	"errors"
-	"fmt"
 	"math/rand"
-	"strings"
 	"sync"
 
 	"github.com/go-mangos/mangos"
@@ -16,40 +17,10 @@ import (
 	"util/logs"
 
 	"core/net"
+	. "core/net/lan"
 )
 
 var _ = logs.Debug
-
-//
-func SrvName(srvId string) string {
-	ss := strings.Split(srvId, "@")
-	return ss[0]
-}
-
-func SrvId(srvName, addr string) string {
-	return fmt.Sprintf("%s@%s", srvName, addr) // to do缩短长度
-}
-
-//
-type LanCfg struct {
-	Name string // server name
-	Addr string // server addr -- tcp://$ip:$port
-}
-
-func NewLanCfg(name, addr string) *LanCfg {
-	if !strings.HasPrefix(addr, "tcp://") {
-		addr = "tcp://" + addr
-	}
-	return &LanCfg{Name: name, Addr: addr}
-}
-
-func (this LanCfg) ServerId() string {
-	return SrvId(this.Name, this.Addr)
-}
-
-func (this LanCfg) String() string {
-	return fmt.Sprintf("%v=>%v", this.Name, this.Addr)
-}
 
 // 接收其他服务器消息
 type Server struct {
